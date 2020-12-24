@@ -1,9 +1,6 @@
 import socket
 import sys
 from datetime import datetime
-import csv
-import numpy
-import pandas
 import xml.etree.ElementTree as et
 
 # https://realpython.com/python-sockets/
@@ -13,12 +10,11 @@ import xml.etree.ElementTree as et
 
 
 
-host = '127.0.0.1' #ip address
+host = '192.168.87.160' #ip address
 port = 10000       #port number 
 buffer_size = 4096
-file_to_client = "processing_times_table.csv"   #file beign send to client
-
-save_file = open("save","w")    #open a file to write data receiving from server
+file_to_client = "processing_times_table.csv"   #file being send to client
+save_file = open("save","w")    #open a file to write data receiving from client
 
 with socket.socket(socket.AF_INET,socket.SOCK_STREAM) as sock:  #create tcp server socket
     sock.bind((host,port)) #bind socket to address
@@ -28,10 +24,10 @@ with socket.socket(socket.AF_INET,socket.SOCK_STREAM) as sock:  #create tcp serv
     with client_conn:
         print(f"Connection established with {client_addr}")
         while True:
-            data = client_conn.recv(buffer_size).decode()  #receive data info using the client socket
-            filename = data
+            data_from_client = client_conn.recv(buffer_size).decode()  #receive data info using the client socket
+            filename = data_from_client
             print("data received from server:", filename)  
-            if not data:
+            if not data_from_client:
                 break
             else:
                 with open(filename, "wb") as f:    #receive actual data from the file through socket 
@@ -48,10 +44,10 @@ with socket.socket(socket.AF_INET,socket.SOCK_STREAM) as sock:  #create tcp serv
                     today = datetime.now()
                     save_file.write(str(today) + '\t' + name + ':' + n1 + ',' + n2 + '\n')   #write the data received in file
                 ###########################################################################
-                client_conn.send(f"{file_to_client}".encode())
-                with open(file_to_client,"rb") as f2:
-                    reader = f2.read(buffer_size)
-                    client_conn.sendall(reader)
+                client_conn.send(f"{file_to_client}".encode())   #send file to client
+                with open(file_to_client,"rb") as f2:     
+                    data_send_to_plc = f2.read(buffer_size)
+                    client_conn.sendall(data_send_to_plc)
                 ############################################################################
         save_file.close()
     client_conn.close()
