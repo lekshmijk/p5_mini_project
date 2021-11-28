@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<rfid_info>
+    <info name="Carrier_id">
+        <number1 name = "Number">1</number1>
+        <number2 name = "Number">9</number2>
+    </info>
+    <info name="Station_id">
+        <number1 name ="Number">4</number1>
+        <number2 name = "Number">3</number2>
+    </info>
+</rfid_info>
